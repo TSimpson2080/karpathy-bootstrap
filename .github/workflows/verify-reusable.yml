@@ -1,0 +1,29 @@
+# Central, versioned gate. Consumer repos call this via `uses:` and pin a tag.
+# Runs in the CALLER's context, so actions/checkout checks out the caller repo
+# and scripts/check-placeholders.sh + docs/ai/KARPATHY_METHOD.md are the caller's copies.
+name: karpathy-verify-reusable
+on:
+  workflow_call:
+    inputs:
+      expected_version:
+        type: string
+        required: false
+        default: "1.0"
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Placeholders filled + guardrails consistent
+        run: bash scripts/check-placeholders.sh
+      - name: Kit version not drifted
+        run: |
+          want="${{ inputs.expected_version }}"
+          have="$(grep -m1 '^Version:' docs/ai/KARPATHY_METHOD.md | sed 's/^Version:[[:space:]]*//')"
+          if [ "$want" != "$have" ]; then
+            echo "FAIL: KARPATHY_METHOD.md is version '$have' but the pinned workflow expects '$want'."
+            echo "Re-sync this repo from karpathy-bootstrap and bump the @tag."
+            exit 1
+          fi
+          echo "OK: kit version $have matches pinned $want."

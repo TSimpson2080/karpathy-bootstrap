@@ -1,0 +1,22 @@
+name: karpathy-verify
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  karpathy:
+    uses: USERNAME/karpathy-bootstrap/.github/workflows/verify-reusable.yml@v1
+    with:
+      expected_version: "1.0"
+
+  # Add THIS repo's real verification below so unverified work cannot merge.
+  # Commands must match docs/ai/VERIFICATION.md.
+  # verify:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: <typecheck>
+  #     - run: <lint>
+  #     - run: <test>
+  #     - run: <build>

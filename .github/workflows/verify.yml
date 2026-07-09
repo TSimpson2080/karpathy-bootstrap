@@ -1,0 +1,24 @@
+name: karpathy-verify
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  setup-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup gate (placeholders filled + guardrails consistent)
+        run: bash scripts/check-placeholders.sh
+
+  # Wire the repo's REAL verification here so unverified work cannot merge.
+  # Commands MUST match docs/ai/VERIFICATION.md. Uncomment and fill in.
+  # verify:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: <typecheck command>
+  #     - run: <lint command>
+  #     - run: <test command>
+  #     - run: <build command>
