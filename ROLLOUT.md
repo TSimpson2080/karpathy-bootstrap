@@ -48,6 +48,19 @@ needs GitHub Pro; public repos are free.)
 Create them from the `karpathy-bootstrap` template, or run
 `tools/karpathy-sync.sh you/new-repo` once. Then step 4 for that repo.
 
+## 6. Bring your planners into the method
+
+Seed your planning surfaces once with `docs/ai/PLANNER.md`: a ChatGPT Custom GPT /
+Project for the Codex side, a Claude Project for the Claude Code side. Then, per
+planning session, paste in the target repo's live brief:
+
+```bash
+tools/planner-brief.sh TSimpson2080/someday | pbcopy
+```
+
+Now the planner writes method-shaped tasks grounded in that repo's real spec and
+verification commands, and flags hard-stops before handing work to the executor.
+
 ## Updating the method later
 Change the canonical files, bump `Version:` in `docs/ai/KARPATHY_METHOD.md`, move
 the tag (`git tag -f v1 && git push -f origin v1`, or cut `v2` and update

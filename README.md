@@ -13,7 +13,9 @@ docs/ai/KARPATHY_METHOD.md      # THE canonical process (version-stamped)
 docs/ai/PROJECT_SPEC.md         # fill in: what this repo is  (gated by CI)
 docs/ai/VERIFICATION.md         # fill in: how to verify work (gated by CI)
 docs/ai/TASK_TEMPLATE.md        # copy per task
+docs/ai/PLANNER.md               # operating instructions for the PLANNING role (ChatGPT/Claude)
 scripts/check-placeholders.sh   # setup gate: placeholders filled + guardrails consistent
+tools/planner-brief.sh          # print a repo's paste-ready planning brief
 .github/workflows/verify.yml    # runs the gate; add your real test/lint/build job
 .github/pull_request_template.md
 ```
@@ -44,6 +46,28 @@ commands. Everything else is canonical — leave it alone.
 
 See `NEW_REPO_PROMPT.md` and `MIDSTREAM_REPO_PROMPT.md`. Both reference the single
 canonical path `~/karpathy-bootstrap`.
+
+## Planner integration (ChatGPT / Claude)
+
+The repo files integrate the *executor* (Claude Code reads `CLAUDE.md`, Codex reads
+`AGENTS.md`). To bring the *planner* — the ChatGPT/Claude session that writes task
+specs — into the method too:
+
+1. Seed a Custom GPT / Project (ChatGPT) and a Project (Claude) with
+   `docs/ai/PLANNER.md` as its instructions. Do this once per surface.
+2. Each planning session, feed it the target repo's live context:
+
+   ```bash
+   tools/planner-brief.sh owner/repo | pbcopy   # then paste into the session
+   ```
+
+   (If your ChatGPT/Claude can read GitHub directly via a connector, point it at
+   the repo's `docs/ai/` instead and skip the paste.)
+
+The planner then emits tasks in `TASK_TEMPLATE.md` shape, flags hard-stops before
+dispatch, and closes the loop on the executor's Completion Report. `PLANNER.md`
+is version-locked and synced like the rest; its hard-stops list is CI-checked to
+stay identical to `CLAUDE.md`/`AGENTS.md`.
 
 ## Rolling out across many repos
 

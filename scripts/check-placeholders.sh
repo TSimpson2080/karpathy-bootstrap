@@ -15,11 +15,23 @@ for f in docs/ai/PROJECT_SPEC.md docs/ai/VERIFICATION.md; do
   fi
 done
 
-# 2) The "Hard stops" block must be identical in CLAUDE.md and AGENTS.md.
-extract() { awk '/^## /{p=0} /^## Hard stops/{p=1} p' "$1"; }
-if ! diff <(extract "$root/CLAUDE.md") <(extract "$root/AGENTS.md") >/dev/null 2>&1; then
-  echo "FAIL: 'Hard stops' section differs between CLAUDE.md and AGENTS.md"
-  fail=1
+# 2) The "Hard stops" LIST must match the canonical one in KARPATHY_METHOD.md
+#    across every mirror (CLAUDE.md, AGENTS.md, docs/ai/PLANNER.md).
+#    We compare only the bullet items — not the surrounding prose — so prettier
+#    re-wrapping the paragraphs never causes a false failure, and the canonical
+#    file is the single source of truth (not just "the mirrors agree").
+hardstops() { awk '/^## /{p=0} /^## Hard stops/{p=1} p' "$1" | grep -E '^[-*] ' | sed -E 's/^[-*][[:space:]]+//; s/[[:space:]]+$//'; }
+canon="docs/ai/KARPATHY_METHOD.md"
+if [ -f "$root/$canon" ]; then
+  for f in CLAUDE.md AGENTS.md docs/ai/PLANNER.md; do
+    [ -f "$root/$f" ] || continue
+    if ! diff <(hardstops "$root/$canon") <(hardstops "$root/$f") >/dev/null 2>&1; then
+      echo "FAIL: 'Hard stops' list in $f differs from canonical $canon"
+      fail=1
+    fi
+  done
+else
+  echo "WARN: $canon not found; skipping hard-stops consistency check"
 fi
 
 if [ "$fail" -ne 0 ]; then

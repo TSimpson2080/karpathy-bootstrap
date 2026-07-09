@@ -6,6 +6,10 @@ Work in small, verifiable loops:
 spec -> inspect -> plan -> small change -> verify -> fix -> report
 ```
 
+Start every task by running `bash scripts/agent-preflight.sh` — it prints this
+repo's spec, the verification commands to run, and the hard stops, so the
+"inspect" step is never skipped.
+
 Read before changing code:
 
 - `docs/ai/KARPATHY_METHOD.md` — the canonical process (full guardrails, report format, definition of done)
@@ -15,6 +19,10 @@ Read before changing code:
 Do not claim completion unless the relevant `VERIFICATION.md` commands passed, or
 you state exactly which command you could not run and why. Run those commands;
 do not invent them.
+
+Tasks may arrive pre-specified in `docs/ai/TASK_TEMPLATE.md` shape from a planner
+(ChatGPT/Claude). Treat that spec as your Spec step, but still inspect the repo to
+confirm it — if the repo contradicts the plan, stop and say so in your report.
 
 ## Hard stops — require explicit human approval
 

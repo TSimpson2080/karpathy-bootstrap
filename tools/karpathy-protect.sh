@@ -15,7 +15,7 @@ ME="$(gh api user --jq .login)"
 
 repos=()
 if [ "${1:-}" = "--all" ]; then
-  mapfile -t repos < <(gh repo list "$ME" --no-archived --source -L 500 --json nameWithOwner -q '.[].nameWithOwner')
+  repos=( $(gh repo list "$ME" --no-archived --source -L 500 --json nameWithOwner -q '.[].nameWithOwner') )
 else
   repos=("$@")
 fi
