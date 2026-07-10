@@ -5,9 +5,15 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 fail=0
 
-# 1) No unfilled [Placeholder] tokens in the two files that MUST be customized.
-#    Matches "[Word...]" but NOT markdown checkboxes "[ ]".
+# 1) The two customizable files must EXIST and contain no unfilled [Placeholder]
+#    tokens. A missing file is a failure — not a silent pass.
+#    The placeholder regex matches "[Word...]" but NOT markdown checkboxes "[ ]".
 for f in docs/ai/PROJECT_SPEC.md docs/ai/VERIFICATION.md; do
+  if [ ! -f "$root/$f" ]; then
+    echo "FAIL: required file $f is missing (kit not configured for this repo)"
+    fail=1
+    continue
+  fi
   if grep -nE '\[[A-Za-z][^]]*\]' "$root/$f" >/dev/null 2>&1; then
     echo "FAIL: unfilled placeholder(s) in $f:"
     grep -nE '\[[A-Za-z][^]]*\]' "$root/$f" | sed 's/^/    /'
@@ -31,7 +37,8 @@ if [ -f "$root/$canon" ]; then
     fi
   done
 else
-  echo "WARN: $canon not found; skipping hard-stops consistency check"
+  echo "FAIL: canonical $canon is missing (kit not installed correctly)"
+  fail=1
 fi
 
 if [ "$fail" -ne 0 ]; then
