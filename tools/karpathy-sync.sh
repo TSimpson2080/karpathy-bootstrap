@@ -47,7 +47,7 @@ for repo in "${repos[@]}"; do
   fi
   git -C "$dir" add -A
   if git -C "$dir" diff --cached --quiet; then echo "  already up to date"; continue; fi
-  git -C "$dir" -c user.email=karpathy-sync@local -c user.name=karpathy-sync commit -q -m "chore: adopt Karpathy Method ($KIT_REF)"
+  git -C "$dir" commit -q -m "chore: adopt Karpathy Method ($KIT_REF)"
   git -C "$dir" push -q -u origin "$BRANCH" --force-with-lease
   gh pr create --repo "$repo" --head "$BRANCH" --base "$(gh repo view "$repo" --json defaultBranchRef -q .defaultBranchRef.name)" \
     --title "Adopt Karpathy Method ($KIT_REF)" \
